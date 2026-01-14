@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotebookLM-Py 中文教程 | 小白入门指南</title>
+    <meta name="description" content="NotebookLM-Py 中文教程 - 从零开始学习使用 Google NotebookLM Python API，详细步骤，小白也能轻松上手">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f0f23;
+            --bg-card: #1a1a2e;
+            --bg-code: #16213e;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-light);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Section styles */
+        section {
+            padding: 4rem 0;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .emoji {
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--primary-light);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        /* Info boxes */
+        .info-box {
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box.tip {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .info-box.tip::before {
+            content: '💡 提示：';
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .info-box.warning::before {
+            content: '⚠️ 注意：';
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .info-box.danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .info-box.danger::before {
+            content: '❌ 重要：';
+            font-weight: 600;
+            color: var(--danger);
+        }
+
+        .info-box.info {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .info-box.info::before {
+            content: 'ℹ️ 说明：';
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .code-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .code-dots span:nth-child(1) { background: #ff5f57; }
+        .code-dots span:nth-child(2) { background: #febc2e; }
+        .code-dots span:nth-child(3) { background: #28c840; }
+
+        pre {
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .inline-code {
+            background: rgba(99, 102, 241, 0.2);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--primary-light);
+        }
+
+        .comment { color: #6b7280; }
+        .command { color: #a5b4fc; }
+        .string { color: #86efac; }
+        .keyword { color: #f472b6; }
+        .function { color: #67e8f9; }
+        .output { color: #94a3b8; font-style: italic; }
+
+        /* Steps */
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        li strong {
+            color: var(--text);
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Accordion / FAQ */
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-question::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+        }
+
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* Feature grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .feature-card h4 {
+            margin: 0 0 0.5rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Use case cards */
+        .use-case {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .use-case h4 {
+            margin-top: 0;
+            color: var(--text);
+        }
+
+        /* Navigation buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-btn.secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .nav-btn.secondary:hover {
+            border-color: var(--primary);
+        }
+
+        /* TOC */
+        .toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-list li {
+            margin: 0.5rem 0;
+        }
+
+        .toc-list a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list a:hover {
+            color: var(--primary-light);
+        }
+
+        .toc-list a::before {
+            content: '→';
+            color: var(--primary);
+        }
+
+        /* Separator */
+        .separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 3rem 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            pre {
+                font-size: 0.75rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Highlight */
+        .highlight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(129, 140, 248, 0.2) 100%);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+        }
+
+        /* Command explanation */
+        .cmd-explain {
+            display: flex;
+            gap: 1rem;
+            margin: 0.75rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            align-items: flex-start;
+        }
+
+        .cmd-explain code {
+            flex-shrink: 0;
+            background: var(--bg-code);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            color: var(--primary-light);
+            font-size: 0.85rem;
+        }
+
+        .cmd-explain span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">NotebookLM-Py 教程</div>
+            <ul class="nav-links">
+                <li><a href="#what-is">什么是它</a></li>
+                <li><a href="#preparation">准备工作</a></li>
+                <li><a href="#install">安装</a></li>
+                <li><a href="#usage">使用教程</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">📖 小白友好 · 零基础入门</div>
+        <h1>NotebookLM-Py<br>完整中文教程</h1>
+        <p class="hero-subtitle">
+            手把手教你使用 Google NotebookLM 的 Python API<br>
+            从安装到实战，每一步都有详细解释
+        </p>
+        <div class="nav-buttons" style="justify-content: center;">
+            <a href="#preparation" class="nav-btn primary">🚀 开始学习</a>
+            <a href="https://github.com/teng-lin/notebooklm-py" target="_blank" class="nav-btn secondary">📦 GitHub 源码</a>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- TOC -->
+        <div class="toc">
+            <h3>📑 目录导航</h3>
+            <ul class="toc-list">
+                <li><a href="#what-is">什么是 NotebookLM-Py？</a></li>
+                <li><a href="#can-do">它能做什么？</a></li>
+                <li><a href="#preparation">准备工作（必读）</a></li>
+                <li><a href="#install">安装步骤</a></li>
+                <li><a href="#login">登录认证</a></li>
+                <li><a href="#usage">使用教程</a></li>
+                <li><a href="#python-api">Python API 教程</a></li>
+                <li><a href="#examples">实战案例</a></li>
+                <li><a href="#faq">常见问题解答</a></li>
+            </ul>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- What is it -->
+        <section id="what-is">
+            <div class="section-header">
+                <h2><span class="emoji">🤔</span> 什么是 NotebookLM-Py？</h2>
+            </div>
+
+            <div class="card">
+                <h3>简单来说</h3>
+                <p><strong>NotebookLM</strong> 是 Google 推出的一款 AI 笔记工具，你可以上传文档（PDF、网页、视频等），然后让 AI 帮你：</p>
+                <ul>
+                    <li>📝 <strong>总结内容</strong> - 快速理解长文档的核心要点</li>
+                    <li>💬 <strong>问答对话</strong> - 像聊天一样询问文档内容</li>
+                    <li>🎙️ <strong>生成播客</strong> - 自动把内容转成两人对话的音频节目</li>
+                    <li>📊 <strong>制作测验</strong> - 生成学习测试题和闪卡</li>
+                </ul>
+                
+                <div class="info-box info">
+                    <strong>NotebookLM-Py</strong> 就是一个 Python 工具库，让你可以用代码或命令行来操作 NotebookLM，实现自动化批量处理。
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>为什么要用这个工具？</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>批量处理</h4>
+                        <p>一次性导入几十个网页或PDF，不用一个个手动添加</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h4>自动化</h4>
+                        <p>设置好脚本，自动生成播客、报告等内容</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <h4>集成开发</h4>
+                        <p>把 NotebookLM 集成到你自己的应用程序中</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box warning">
+                这是一个<strong>非官方工具</strong>，使用了未公开的 Google API。Google 可能随时更改接口导致工具失效。建议用于个人学习和研究项目。
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- What can it do -->
+        <section id="can-do">
+            <div class="section-header">
+                <h2><span class="emoji">✨</span> 它能做什么？</h2>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>功能类别</th>
+                            <th>具体能力</th>
+                            <th>使用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>📁 笔记本管理</strong></td>
+                            <td>创建、列出、重命名、删除、分享</td>
+                            <td>整理不同项目的资料</td>
+                        </tr>
+                        <tr>
+                            <td><strong>📎 添加来源</strong></td>
+                            <td>网页URL、YouTube视频、PDF文件、Google Drive、纯文本</td>
+                            <td>导入各种格式的学习资料</td>
+                        </tr>
+                        <tr>
+                            <td><strong>💬 AI对话</strong></td>
+                            <td>提问、查看对话历史、自定义AI角色</td>
+                            <td>向AI询问文档内容</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🎙️ 内容生成</strong></td>
+                            <td>播客音频、视频、幻灯片、测验、闪卡、报告、思维导图</td>
+                            <td>把资料转化成各种形式</td>
+                        </tr>
+                        <tr>
+                            <td><strong>📥 下载</strong></td>
+                            <td>音频、视频、幻灯片、报告等所有生成内容</td>
+                            <td>保存到本地使用</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Preparation -->
+        <section id="preparation">
+            <div class="section-header">
+                <h2><span class="emoji">📋</span> 准备工作（必读）</h2>
+                <p>开始之前，请确保你满足以下条件：</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">拥有 Google 账号</div>
+                    <p>你需要一个 Google 账号来使用 NotebookLM。如果没有，先去 <a href="https://accounts.google.com" target="_blank" style="color: var(--primary-light);">accounts.google.com</a> 注册一个。</p>
+                    <div class="info-box tip">
+                        建议先在浏览器中访问 <a href="https://notebooklm.google.com" target="_blank" style="color: var(--success);">notebooklm.google.com</a>，确认你的账号可以正常使用 NotebookLM。
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">安装 Python 3.10 或更高版本</div>
+                    <p>这个工具需要 Python 3.10+。检查你是否已安装：</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-dots"><span></span><span></span><span></span></div>
+                            <div class="code-title">命令行 / 终端</div>
+                        </div>
+                        <pre><code><span class="command">python</span> --version
+<span class="output"># 应该显示类似：Python 3.10.x 或更高</span></code></pre>
+                    </div>
+                    
+                    <p><strong>如果没有安装 Python：</strong></p>
+                    <ul>
+                        <li><strong>Windows</strong>：去 <a href="https://www.python.org/downloads/" target="_blank" style="color: var(--primary-light);">python.org</a> 下载安装，<span class="highlight">记得勾选 "Add Python to PATH"</span></li>
+                        <li><strong>Mac</strong>：使用 Homebrew 安装：<code class="inline-code">brew install python</code></li>
+                        <li><strong>Linux</strong>：使用包管理器：<code class="inline-code">sudo apt install python3 python3-pip</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">了解如何打开命令行/终端</div>
+                    <ul>
+                        <li><strong>Windows</strong>：按 <code class="inline-code">Win + R</code>，输入 <code class="inline-code">cmd</code> 回车；或搜索 "PowerShell"</li>
+                        <li><strong>Mac</strong>：按 <code class="inline-code">Cmd + 空格</code>，搜索 "终端" 或 "Terminal"</li>
+                        <li><strong>Linux</strong>：按 <code class="inline-code">Ctrl + Alt + T</code></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Installation -->
+        <section id="install">
+            <div class="section-header">
+                <h2><span class="emoji">⬇️</span> 安装步骤</h2>
+                <p>安装非常简单，只需要两条命令：</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">安装 notebooklm-py 包</div>
+                    <p>打开命令行，输入以下命令：</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-dots"><span></span><span></span><span></span></div>
+                            <div class="code-title">命令行 / 终端</div>
+                        </div>
+                        <pre><code><span class="command">pip install</span> <span class="string">"notebooklm-py[browser]"</span></code></pre>
+                    </div>
+                    
+                    <div class="cmd-explain">
+                        <code>pip install</code>
+                        <span>Python 的包安装命令，用来安装第三方库</span>
+                    </div>
+                    <div class="cmd-explain">
+                        <code>[browser]</code>
+                        <span>额外安装浏览器支持，用于自动登录 Google 账号（首次必需）</span>
+                    </div>
+
+                    <div class="info-box tip">
+                        如果提示 <code class="inline-code">pip</code> 找不到，试试用 <code class="inline-code">pip3 install "notebooklm-py[browser]"</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">安装 Chromium 浏览器（用于登录）</div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-dots"><span></span><span></span><span></span></div>
+                            <div class="code-title">命令行 / 终端</div>
+                        </div>
+                        <pre><code><span class="command">playwright install</span> chromium</code></pre>
+                    </div>
+                    <p>这会下载一个用于自动化的 Chromium 浏览器，大约 100-200MB。</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">验证安装成功</div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-dots"><span></span><span></span><span></span></div>
+                            <div class="code-title">命令行 / 终端</div>
+                        </div>
+                        <pre><code><span class="command">notebooklm</span> --help
+<span class="output"># 如果显示帮助信息，说明安装成功！</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Login -->
+        <section id="login">
+            <div class="section-header">
+                <h2><span class="emoji">🔐</span> 登录认证</h2>
+                <p>首次使用需要登录你的 Google 账号：</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">执行登录命令</div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-dots"><span></span><span></span><span></span></div>
+                            <div class="code-title">命令行 / 终端</div>
+                        </div>
+                        <pre><code><span class="command">notebooklm</span> login</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">在弹出的浏览器中登录</div>
+                    <p>执行命令后，会自动打开一个浏览器窗口：</p>
+                    <ol>
+                        <li>输入你的 Google 账号邮箱</li>
+                        <li>输入密码</li>
+                        <li>完成两步验证（如果有）</li>
+                        <li>等待页面跳转到 NotebookLM</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">登录成功</div>
+                    <p>当命令行显示类似 <span class="highlight">"Login successful"</span> 的信息时，说明认证完成。</p>
+                    <div class="info-box info">
+                        登录凭证会保存在本地，下次使用不需要重新登录。凭证保存在 <code class="inline-code">~/.notebooklm/</code> 目录中。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Usage -->
+        <section id="usage">
+            <div class="section-header">
+                <h2><span class="emoji">💻</span> 命令行使用教程</h2>
+                <p>学会以下命令，你就能完成大部分操作了！</p>
+            </div>
+
+            <h3>📁 笔记本操作</h3>
+
+            <h4>创建新笔记本</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">创建笔记本</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> create <span class="string">"我的AI学习笔记"</span>
+
+<span class="output"># 输出示例：
+# Created notebook: 我的AI学习笔记
+# ID: abc123xyz789</span></code></pre>
+            </div>
+            <div class="info-box tip">
+                记住输出的 <strong>ID</strong>，后面的操作会用到它！
+            </div>
+
+            <h4>查看所有笔记本</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">列出笔记本</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> list
+
+<span class="output"># 会显示所有笔记本的名称和 ID</span></code></pre>
+            </div>
+
+            <h4>选择要操作的笔记本</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">选择笔记本</div>
+                </div>
+                <pre><code><span class="comment"># 用笔记本的 ID</span>
+<span class="command">notebooklm</span> use abc123xyz789
+
+<span class="output"># 之后的命令都会在这个笔记本上操作</span></code></pre>
+            </div>
+
+            <h3>📎 添加来源</h3>
+
+            <h4>添加网页</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">添加网页来源</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> source add <span class="string">"https://zh.wikipedia.org/wiki/人工智能"</span>
+
+<span class="output"># 工具会自动抓取网页内容并添加到笔记本</span></code></pre>
+            </div>
+
+            <h4>添加本地 PDF 文件</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">添加PDF文件</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> source add <span class="string">"./我的论文.pdf"</span>
+
+<span class="output"># 支持 PDF、TXT、MD、DOCX 格式</span></code></pre>
+            </div>
+
+            <h4>添加 YouTube 视频</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">添加YouTube视频</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> source add <span class="string">"https://www.youtube.com/watch?v=xxxxx"</span>
+
+<span class="output"># 会自动提取视频字幕作为内容</span></code></pre>
+            </div>
+
+            <h4>查看已添加的来源</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">列出来源</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> source list</code></pre>
+            </div>
+
+            <h3>💬 与 AI 对话</h3>
+
+            <h4>提问</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">向AI提问</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> ask <span class="string">"这些文档的主要观点是什么？"</span>
+
+<span class="output"># AI 会基于你添加的所有来源回答问题</span></code></pre>
+            </div>
+
+            <h4>更多问题示例</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">各种提问示例</div>
+                </div>
+                <pre><code><span class="command">notebooklm</span> ask <span class="string">"用简单的语言解释一下机器学习"</span>
+<span class="command">notebooklm</span> ask <span class="string">"列出文中提到的 5 个关键概念"</span>
+<span class="command">notebooklm</span> ask <span class="string">"这篇论文和那个视频有什么共同点？"</span></code></pre>
+            </div>
+
+            <h3>🎙️ 生成内容</h3>
+
+            <h4>生成播客（音频概述）</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">生成播客</div>
+                </div>
+                <pre><code><span class="comment"># 开始生成（需要等待几分钟）</span>
+<span class="command">notebooklm</span> generate audio --wait
+
+<span class="comment"># 下载生成的音频文件</span>
+<span class="command">notebooklm</span> download audio ./我的播客.mp3</code></pre>
+            </div>
+
+            <div class="info-box info">
+                <code class="inline-code">--wait</code> 参数表示等待生成完成。播客通常需要 2-5 分钟生成。
+            </div>
+
+            <h4>生成其他内容</h4>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">生成各种内容</div>
+                </div>
+                <pre><code><span class="comment"># 生成测验题</span>
+<span class="command">notebooklm</span> generate quiz --wait
+
+<span class="comment"># 生成闪卡（学习卡片）</span>
+<span class="command">notebooklm</span> generate flashcards --wait
+
+<span class="comment"># 生成学习指南</span>
+<span class="command">notebooklm</span> generate study-guide --wait
+
+<span class="comment"># 生成思维导图</span>
+<span class="command">notebooklm</span> generate mindmap --wait</code></pre>
+            </div>
+
+            <h3>📥 下载内容</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">下载生成的内容</div>
+                </div>
+                <pre><code><span class="comment"># 下载音频</span>
+<span class="command">notebooklm</span> download audio ./podcast.mp3
+
+<span class="comment"># 下载测验（Markdown格式）</span>
+<span class="command">notebooklm</span> download quiz ./quiz.md
+
+<span class="comment"># 下载闪卡</span>
+<span class="command">notebooklm</span> download flashcards ./flashcards.md</code></pre>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Python API -->
+        <section id="python-api">
+            <div class="section-header">
+                <h2><span class="emoji">🐍</span> Python API 教程</h2>
+                <p>如果你想在 Python 程序中使用，可以这样写：</p>
+            </div>
+
+            <h3>基础示例</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">example.py</div>
+                </div>
+                <pre><code><span class="keyword">import</span> asyncio
+<span class="keyword">from</span> notebooklm <span class="keyword">import</span> NotebookLMClient
+
+<span class="keyword">async def</span> <span class="function">main</span>():
+    <span class="comment"># 创建客户端（自动使用保存的登录信息）</span>
+    <span class="keyword">async with await</span> NotebookLMClient.from_storage() <span class="keyword">as</span> client:
+        
+        <span class="comment"># 1. 查看所有笔记本</span>
+        notebooks = <span class="keyword">await</span> client.notebooks.list()
+        <span class="function">print</span>(<span class="string">"你的笔记本："</span>)
+        <span class="keyword">for</span> nb <span class="keyword">in</span> notebooks:
+            <span class="function">print</span>(<span class="string">f"  - {nb.title} (ID: {nb.id})"</span>)
+
+        <span class="comment"># 2. 创建新笔记本</span>
+        new_nb = <span class="keyword">await</span> client.notebooks.create(<span class="string">"Python测试笔记本"</span>)
+        <span class="function">print</span>(<span class="string">f"创建成功！ID: {new_nb.id}"</span>)
+
+        <span class="comment"># 3. 添加网页来源</span>
+        <span class="keyword">await</span> client.sources.add_url(
+            new_nb.id, 
+            <span class="string">"https://zh.wikipedia.org/wiki/Python"</span>
+        )
+        <span class="function">print</span>(<span class="string">"来源添加成功！"</span>)
+
+        <span class="comment"># 4. 向AI提问</span>
+        result = <span class="keyword">await</span> client.chat.ask(new_nb.id, <span class="string">"Python是什么？"</span>)
+        <span class="function">print</span>(<span class="string">f"AI回答：{result.answer}"</span>)
+
+<span class="comment"># 运行程序</span>
+asyncio.run(main())</code></pre>
+            </div>
+
+            <div class="info-box info">
+                Python API 使用 <code class="inline-code">async/await</code> 异步语法。如果你不熟悉，可以先学习一下 Python 异步编程基础。
+            </div>
+
+            <h3>生成播客示例</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dots"><span></span><span></span><span></span></div>
+                    <div class="code-title">generate_podcast.py</div>
+                </div>
+                <pre><code><span class="keyword">import</span> asyncio
+<span class="keyword">from</span> notebooklm <span class="keyword">import</span> NotebookLMClient
+
+<span class="keyword">async def</span> <span class="function">generate_podcast</span>(notebook_id: <span class="keyword">str</span>):
+    <span class="keyword">async with await</span> NotebookLMClient.from_storage() <span class="keyword">as</span> client:
+        
+        <span class="comment"># 开始生成播客</span>
+        <span class="function">print</span>(<span class="string">"开始生成播客..."</span>)
+        status = <span class="keyword">await</span> client.artifacts.generate_audio(notebook_id)
+        
+        <span class="comment"># 等待生成完成</span>
+        <span class="function">print</span>(<span class="string">"生成中，请稍候..."</span>)
+        <span class="keyword">await</span> client.artifacts.wait_for_completion(
+            notebook_id, 
+            status.task_id
+        )
+        
+        <span class="function">print</span>(<span class="string">"播客生成完成！"</span>)
+
+<span class="comment"># 使用方法：把 "你的笔记本ID" 替换成实际ID</span>
+asyncio.run(generate_podcast(<span class="string">"你的笔记本ID"</span>))</code></pre>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- Examples -->
+        <section id="examples">
+            <div class="section-header">
+                <h2><span class="emoji">🎯</span> 实战案例</h2>
+                <p>以下是一些真实的使用场景：</p>
+            </div>
+
+            <div class="use-case">
+                <h4>📚 案例1：快速学习一个新话题</h4>
+                <p>假设你想快速了解"量子计算"：</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots"><span></span><span></span><span></span></div>
+                        <div class="code-title">学习新话题</div>
+                    </div>
+                    <pre><code><span class="comment"># 1. 创建笔记本</span>
+<span class="command">notebooklm</span> create <span class="string">"量子计算学习"</span>
+<span class="command">notebooklm</span> use &lt;笔记本ID&gt;
+
+<span class="comment"># 2. 添加多个学习资源</span>
+<span class="command">notebooklm</span> source add <span class="string">"https://zh.wikipedia.org/wiki/量子计算机"</span>
+<span class="command">notebooklm</span> source add <span class="string">"https://www.youtube.com/watch?v=量子计算视频"</span>
+
+<span class="comment"># 3. 让AI帮你总结</span>
+<span class="command">notebooklm</span> ask <span class="string">"用小学生能听懂的话解释量子计算"</span>
+
+<span class="comment"># 4. 生成播客，通勤路上听</span>
+<span class="command">notebooklm</span> generate audio --wait
+<span class="command">notebooklm</span> download audio ./量子计算入门.mp3
+
+<span class="comment"># 5. 生成测验检验学习效果</span>
+<span class="command">notebooklm</span> generate quiz --wait
+<span class="command">notebooklm</span> download quiz ./量子计算测验.md</code></pre>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h4>📄 案例2：研究论文分析</h4>
+                <p>分析一批学术论文：</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots"><span></span><span></span><span></span></div>
+                        <div class="code-title">论文分析</div>
+                    </div>
+                    <pre><code><span class="comment"># 1. 创建笔记本</span>
+<span class="command">notebooklm</span> create <span class="string">"大语言模型研究"</span>
+<span class="command">notebooklm</span> use &lt;笔记本ID&gt;
+
+<span class="comment"># 2. 添加多篇论文</span>
+<span class="command">notebooklm</span> source add <span class="string">"./论文1.pdf"</span>
+<span class="command">notebooklm</span> source add <span class="string">"./论文2.pdf"</span>
+<span class="command">notebooklm</span> source add <span class="string">"./论文3.pdf"</span>
+
+<span class="comment"># 3. 进行分析</span>
+<span class="command">notebooklm</span> ask <span class="string">"这三篇论文的共同研究方法是什么？"</span>
+<span class="command">notebooklm</span> ask <span class="string">"它们的主要结论有何异同？"</span>
+<span class="command">notebooklm</span> ask <span class="string">"基于这些论文，未来研究方向可能是什么？"</span></code></pre>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h4>🎧 案例3：批量生成内容播客</h4>
+                <p>用 Python 脚本批量处理：</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots"><span></span><span></span><span></span></div>
+                        <div class="code-title">batch_podcast.py</div>
+                    </div>
+                    <pre><code><span class="keyword">import</span> asyncio
+<span class="keyword">from</span> notebooklm <span class="keyword">import</span> NotebookLMClient
+
+<span class="comment"># 要处理的主题列表</span>
+topics = [
+    (<span class="string">"人工智能"</span>, <span class="string">"https://zh.wikipedia.org/wiki/人工智能"</span>),
+    (<span class="string">"机器学习"</span>, <span class="string">"https://zh.wikipedia.org/wiki/机器学习"</span>),
+    (<span class="string">"深度学习"</span>, <span class="string">"https://zh.wikipedia.org/wiki/深度学习"</span>),
+]
+
+<span class="keyword">async def</span> <span class="function">batch_create_podcasts</span>():
+    <span class="keyword">async with await</span> NotebookLMClient.from_storage() <span class="keyword">as</span> client:
+        <span class="keyword">for</span> topic, url <span class="keyword">in</span> topics:
+            <span class="function">print</span>(<span class="string">f"处理：{topic}"</span>)
+            
+            <span class="comment"># 创建笔记本</span>
+            nb = <span class="keyword">await</span> client.notebooks.create(<span class="string">f"{topic}播客"</span>)
+            
+            <span class="comment"># 添加来源</span>
+            <span class="keyword">await</span> client.sources.add_url(nb.id, url)
+            
+            <span class="comment"># 生成播客</span>
+            status = <span class="keyword">await</span> client.artifacts.generate_audio(nb.id)
+            <span class="keyword">await</span> client.artifacts.wait_for_completion(nb.id, status.task_id)
+            
+            <span class="function">print</span>(<span class="string">f"✓ {topic} 完成！"</span>)
+
+asyncio.run(batch_create_podcasts())</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- FAQ -->
+        <section id="faq">
+            <div class="section-header">
+                <h2><span class="emoji">❓</span> 常见问题解答</h2>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">安装时提示 "pip 不是内部或外部命令"</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>这说明 Python 没有正确添加到系统路径。解决方法：</p>
+                        <ol>
+                            <li>重新安装 Python，<strong>务必勾选 "Add Python to PATH"</strong></li>
+                            <li>或者使用完整路径：<code class="inline-code">python -m pip install ...</code></li>
+                            <li>安装后重启命令行窗口</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">登录时浏览器没有自动打开</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>可能是 Playwright 没有正确安装。尝试：</p>
+                        <div class="code-block">
+                            <pre><code><span class="comment"># 重新安装浏览器</span>
+<span class="command">playwright install</span> chromium --with-deps</code></pre>
+                        </div>
+                        <p>如果还是不行，检查是否有防火墙或杀毒软件阻止。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">提示 "认证失败" 或 "Cookie 过期"</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>登录凭证可能已过期，重新登录即可：</p>
+                        <div class="code-block">
+                            <pre><code><span class="command">notebooklm</span> login</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">添加来源时提示错误</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>可能的原因：</p>
+                        <ul>
+                            <li><strong>网页无法访问</strong>：确保 URL 正确且网页可以正常打开</li>
+                            <li><strong>文件路径错误</strong>：使用相对路径（<code class="inline-code">./文件.pdf</code>）或绝对路径</li>
+                            <li><strong>文件格式不支持</strong>：只支持 PDF、TXT、MD、DOCX</li>
+                            <li><strong>文件太大</strong>：NotebookLM 对文件大小有限制</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">生成播客失败或超时</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>播客生成需要时间，可能需要 5-10 分钟。如果失败：</p>
+                        <ul>
+                            <li>确保笔记本中有足够的来源内容</li>
+                            <li>尝试减少来源数量</li>
+                            <li>检查 NotebookLM 网页版是否正常工作</li>
+                            <li>稍后重试（可能是 Google 服务器繁忙）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">这个工具会泄露我的 Google 账号密码吗？</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>不会。</strong></p>
+                        <ul>
+                            <li>登录过程在本地浏览器中进行，密码不会发送给第三方</li>
+                            <li>工具只保存 Cookie（登录凭证），不保存密码</li>
+                            <li>Cookie 保存在你的电脑本地（<code class="inline-code">~/.notebooklm/</code>）</li>
+                            <li>这是开源项目，代码可审计</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">Windows 上命令无法执行</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Windows 用户请注意：</p>
+                        <ul>
+                            <li>使用 <strong>PowerShell</strong> 而不是 CMD</li>
+                            <li>路径使用反斜杠：<code class="inline-code">.\文件.pdf</code></li>
+                            <li>如果权限不足，以管理员身份运行 PowerShell</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">中文内容支持吗？</button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>完全支持！</strong></p>
+                        <ul>
+                            <li>可以添加中文网页、中文PDF</li>
+                            <li>可以用中文提问</li>
+                            <li>生成的播客支持中文（取决于 NotebookLM 的语言设置）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="separator"></div>
+
+        <!-- More Resources -->
+        <section>
+            <div class="section-header">
+                <h2><span class="emoji">📚</span> 更多资源</h2>
+            </div>
+
+            <div class="feature-grid">
+                <a href="https://github.com/teng-lin/notebooklm-py/blob/main/docs/cli-reference.md" target="_blank" class="feature-card" style="text-decoration: none;">
+                    <div class="feature-icon">📖</div>
+                    <h4>CLI 完整参考</h4>
+                    <p>所有命令行命令的详细说明</p>
+                </a>
+                <a href="https://github.com/teng-lin/notebooklm-py/blob/main/docs/python-api.md" target="_blank" class="feature-card" style="text-decoration: none;">
+                    <div class="feature-icon">🐍</div>
+                    <h4>Python API 文档</h4>
+                    <p>完整的 Python API 参考</p>
+                </a>
+                <a href="https://github.com/teng-lin/notebooklm-py/blob/main/docs/troubleshooting.md" target="_blank" class="feature-card" style="text-decoration: none;">
+                    <div class="feature-icon">🔧</div>
+                    <h4>故障排除指南</h4>
+                    <p>更多问题的解决方案</p>
+                </a>
+                <a href="https://notebooklm.google.com" target="_blank" class="feature-card" style="text-decoration: none;">
+                    <div class="feature-icon">🌐</div>
+                    <h4>NotebookLM 官网</h4>
+                    <p>Google NotebookLM 网页版</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            NotebookLM-Py 中文教程 | 基于 
+            <a href="https://github.com/teng-lin/notebooklm-py" target="_blank">teng-lin/notebooklm-py</a> 
+            文档制作
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+            本教程仅供学习参考 | MIT 许可证
+        </p>
+    </footer>
+
+    <script>
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                
+                // Open clicked if wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80;
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
